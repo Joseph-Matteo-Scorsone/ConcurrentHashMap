@@ -16,7 +16,7 @@ Hashmap that avoids the use of a Mutex until the need for resizing for better co
 
 3. Integrate in build.zig
 ```
-   const lockfree_queue = b.createModule(.{
+   const concurrent_HashMap = b.createModule(.{
         .root_source_file = b.path("ConcurrentHashMap/src/concurrentHashMap.zig"),
    });
    exe_mod.addImport("concurrent_HashMap", concurrent_HashMap);
