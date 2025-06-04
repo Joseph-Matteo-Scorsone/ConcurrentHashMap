@@ -27,22 +27,25 @@ Hashmap that avoids the use of a Mutex until the need for resizing for better co
 # Example
 ```
 const std = @import("std");
-const ConcurrentHashMap = @import("path/to/concurrent_hash_map.zig");
+const ConcurrentHashMap = @import("concurrent_HashMap").ConcurrentHashMap;
 
-pub fn main() void {
-    var allocator = std.heap.page_allocator;
-    var map = ConcurrentHashMap(i32, []const u8).init(allocator);
-
+pub fn main() !void {
+    const allocator = std.heap.page_allocator;
+    var map = try ConcurrentHashMap(u64, u64, std.hash_map.AutoContext(u64)).init(allocator, 16, .{});
     defer map.deinit();
 
-    map.put(1, "one");
-    const value = map.get(1);
-    if (value) |v| {
-        std.debug.print("Key 1 maps to: {}\n", .{v});
-    } else {
-        std.debug.print("Key not found.\n", .{});
+    try map.put(1, 100);
+    try map.put(2, 200);
+    try map.put(3, 300);
+
+    var iter = map.iterator();
+    defer iter.deinit();
+
+    while (iter.next()) |entry| {
+        std.debug.print("Key: {any}, Value: {any}\n", .{entry.key, entry.value});
     }
 }
+
 ```
 
 # API
